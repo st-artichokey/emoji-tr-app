@@ -1,5 +1,14 @@
 # Changelog
 
+## feat: Skip translation of bot messages, file uploads, and non-text messages
+
+- Bot/slash command messages (e.g. `/giphy`) now get a thread reply: "Translation of bot and slash command messages is not supported." (detected via `message.bot_id`)
+- File/image uploads now get a thread reply: "Translation of image and file uploads is not supported." (detected via `message.files`)
+- Non-text messages and empty-after-stripping messages now reply in thread instead of sending a DM
+- Added edge case tests for `channel-join` (empty list, missing response_metadata, join info logging) and `stripSlackFormatting` (bare URLs, combined formatting, whitespace-only)
+- Added edge case tests for reaction handler (single-letter, 3+ letter, long flag- prefix reactions)
+- Total tests: 71 (up from 55)
+
 ## feat: Include country name in unsupported flag reply
 
 - Unsupported flag reply now includes the country name (e.g. "Sorry, translation for Antarctica is not supported.")

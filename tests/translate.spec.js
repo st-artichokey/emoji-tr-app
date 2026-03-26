@@ -33,6 +33,19 @@ describe('stripSlackFormatting', () => {
   it('should return empty string for mention-only messages', () => {
     assert.strictEqual(stripSlackFormatting('<@U123>'), '');
   });
+
+  it('should extract bare URLs without labels', () => {
+    assert.strictEqual(stripSlackFormatting('Go to <https://example.com>'), 'Go to https://example.com');
+  });
+
+  it('should handle multiple formatting types combined', () => {
+    const input = 'Hey <@U123>, see <#C456|general> and <https://x.com|link> &amp; more';
+    assert.strictEqual(stripSlackFormatting(input), 'Hey , see #general and link & more');
+  });
+
+  it('should trim whitespace-only input to empty string', () => {
+    assert.strictEqual(stripSlackFormatting('   \n  \t  '), '');
+  });
 });
 
 describe('translateText', () => {

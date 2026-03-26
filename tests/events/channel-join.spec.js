@@ -117,6 +117,40 @@ describe('joinAllPublicChannels', () => {
     assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
   });
 
+  it('should handle empty channels list without errors', async () => {
+    fakeClient = {
+      conversations: {
+        list: mock.fn(async () => ({
+          channels: [],
+          response_metadata: { next_cursor: '' },
+        })),
+        join: mock.fn(),
+      },
+    };
+
+    await joinAllPublicChannels(fakeClient, fakeLogger);
+
+    assert.strictEqual(fakeClient.conversations.join.mock.callCount(), 0);
+    assert.strictEqual(fakeLogger.error.mock.callCount(), 0);
+    assert.strictEqual(fakeLogger.info.mock.callCount(), 0);
+  });
+
+  it('should stop paginating when response_metadata is missing', async () => {
+    fakeClient = {
+      conversations: {
+        list: mock.fn(async () => ({
+          channels: [{ id: 'C1', name: 'chan1', is_member: false }],
+        })),
+        join: mock.fn(),
+      },
+    };
+
+    await joinAllPublicChannels(fakeClient, fakeLogger);
+
+    assert.strictEqual(fakeClient.conversations.list.mock.callCount(), 1);
+    assert.strictEqual(fakeClient.conversations.join.mock.callCount(), 1);
+  });
+
   it('should log count of joined channels', async () => {
     fakeClient = {
       conversations: {
@@ -149,6 +183,19 @@ describe('channelCreatedCallback', () => {
 
     assert.strictEqual(fakeClient.conversations.join.mock.callCount(), 1);
     assert.strictEqual(fakeClient.conversations.join.mock.calls[0].arguments[0].channel, 'C_NEW');
+  });
+
+  it('should log info message on successful join', async () => {
+    const fakeClient = {
+      conversations: { join: mock.fn() },
+    };
+    const fakeLogger = { info: mock.fn(), error: mock.fn() };
+    const event = { channel: { id: 'C_NEW', name: 'new-channel' } };
+
+    await channelCreatedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+    assert.strictEqual(fakeLogger.info.mock.callCount(), 1);
+    assert.ok(fakeLogger.info.mock.calls[0].arguments[0].includes('new-channel'));
   });
 
   it('should log error if join fails', async () => {

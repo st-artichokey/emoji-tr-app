@@ -117,6 +117,42 @@ describe('reaction-added', () => {
     assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
   });
 
+  it('should ignore reactions with 3+ letter names', async () => {
+    const event = {
+      reaction: 'abc',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+    assert.strictEqual(fakeClient.conversations.history.mock.callCount(), 0);
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 0);
+  });
+
+  it('should ignore single-letter reactions', async () => {
+    const event = {
+      reaction: 'a',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+    assert.strictEqual(fakeClient.conversations.history.mock.callCount(), 0);
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 0);
+  });
+
+  it('should ignore flag- prefix with more than 2 letters', async () => {
+    const event = {
+      reaction: 'flag-abc',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+    assert.strictEqual(fakeClient.conversations.history.mock.callCount(), 0);
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 0);
+  });
+
   it('should handle short country code reactions (e.g. "fr")', async () => {
     const event = {
       reaction: 'fr',
@@ -191,8 +227,49 @@ describe('reaction-added', () => {
     assert.strictEqual(text, 'Hey , check this link');
   });
 
-  describe('error DMs', () => {
-    it('should DM user when message has no text', async () => {
+  describe('non-text message errors', () => {
+    it('should reply in thread when conversations.history returns empty messages array', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({
+        messages: [],
+      }));
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes('no text content'));
+    });
+
+    it('should DM user when conversations.history throws', async () => {
+      fakeClient.conversations.history = mock.fn(async () => { throw new Error('history failed'); });
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
+      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.ok(dmMsg.text.includes('history failed'));
+    });
+
+    it('should DM user when posting translation reply fails', async () => {
+      let callCount = 0;
+      fakeClient.chat.postMessage = mock.fn(async () => {
+        callCount++;
+        if (callCount === 1) throw new Error('post failed');
+      });
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
+      // Second call is the error DM
+      const dmMsg = fakeClient.chat.postMessage.mock.calls[1].arguments[0];
+      assert.ok(dmMsg.text.includes('post failed'));
+    });
+
+    it('should reply in thread when message has no text', async () => {
       fakeClient.conversations.history = mock.fn(async () => ({
         messages: [{ ts: '1234.5678' }],
       }));
@@ -200,12 +277,14 @@ describe('reaction-added', () => {
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
-      assert.strictEqual(dmMsg.channel, 'D_DM');
-      assert.ok(dmMsg.text.includes('no text content'));
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes(':fr:'));
+      assert.ok(msgArgs.text.includes('no text content'));
     });
 
-    it('should DM user when stripped text is empty', async () => {
+    it('should reply in thread when stripped text is empty', async () => {
       fakeClient.conversations.history = mock.fn(async () => ({
         messages: [{ text: '<@U123>' }],
       }));
@@ -213,8 +292,11 @@ describe('reaction-added', () => {
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
-      assert.ok(dmMsg.text.includes('no translatable text'));
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes(':fr:'));
+      assert.ok(msgArgs.text.includes('no translatable text'));
     });
 
     it('should DM user when DEEPL_API_KEY is not set', async () => {
@@ -240,14 +322,70 @@ describe('reaction-added', () => {
       assert.ok(dmMsg.text.includes('DeepL API error'));
     });
 
-    it('should log error if DM itself fails', async () => {
-      fakeClient.conversations.history = mock.fn(async () => ({ messages: [{}] }));
-      fakeClient.conversations.open = mock.fn(async () => { throw new Error('dm failed'); });
+    it('should reply in thread when message is from a bot', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({
+        messages: [{ text: 'hello world', bot_id: 'B_BOT' }],
+      }));
 
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      assert.ok(fakeLogger.error.mock.calls[0].arguments[0].includes('Failed to send error DM'));
+      assert.strictEqual(mockTranslateText.mock.callCount(), 0);
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes(':fr:'));
+      assert.ok(msgArgs.text.includes('bot'));
+    });
+
+    it('should reply in thread when message has file uploads', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({
+        messages: [{ text: 'check this out', files: [{ id: 'F1', mimetype: 'image/png' }] }],
+      }));
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.strictEqual(mockTranslateText.mock.callCount(), 0);
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes(':fr:'));
+      assert.ok(msgArgs.text.includes('file'));
+    });
+
+    it('should log error if bot message reply fails', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({
+        messages: [{ text: 'hello', bot_id: 'B_BOT' }],
+      }));
+      fakeClient.chat.postMessage = mock.fn(async () => { throw new Error('post failed'); });
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.ok(fakeLogger.error.mock.calls[0].arguments[0].includes('Failed to post bot message reply'));
+    });
+
+    it('should log error if file upload reply fails', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({
+        messages: [{ text: 'img', files: [{ id: 'F1' }] }],
+      }));
+      fakeClient.chat.postMessage = mock.fn(async () => { throw new Error('post failed'); });
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.ok(fakeLogger.error.mock.calls[0].arguments[0].includes('Failed to post file upload reply'));
+    });
+
+    it('should log error if non-text thread reply fails', async () => {
+      fakeClient.conversations.history = mock.fn(async () => ({ messages: [{}] }));
+      fakeClient.chat.postMessage = mock.fn(async () => { throw new Error('post failed'); });
+
+      const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
+      await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+      assert.ok(fakeLogger.error.mock.calls[0].arguments[0].includes('Failed to post non-text error reply'));
     });
   });
 

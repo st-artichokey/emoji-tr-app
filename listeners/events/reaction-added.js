@@ -50,13 +50,55 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
 
     const message = result.messages?.[0];
     if (!message || !message.text) {
-      await sendErrorDM(client, userId, 'The message had no text content to translate.', logger);
+      try {
+        await client.chat.postMessage({
+          channel: event.item.channel,
+          thread_ts: event.item.ts,
+          text: `:${reaction}: This message has no text content to translate.`,
+        });
+      } catch (replyError) {
+        logger.error('Failed to post non-text error reply:', replyError);
+      }
+      return;
+    }
+
+    if (message.bot_id) {
+      try {
+        await client.chat.postMessage({
+          channel: event.item.channel,
+          thread_ts: event.item.ts,
+          text: `:${reaction}: Translation of bot and slash command messages is not supported.`,
+        });
+      } catch (replyError) {
+        logger.error('Failed to post bot message reply:', replyError);
+      }
+      return;
+    }
+
+    if (message.files?.length > 0) {
+      try {
+        await client.chat.postMessage({
+          channel: event.item.channel,
+          thread_ts: event.item.ts,
+          text: `:${reaction}: Translation of image and file uploads is not supported.`,
+        });
+      } catch (replyError) {
+        logger.error('Failed to post file upload reply:', replyError);
+      }
       return;
     }
 
     const plainText = stripSlackFormatting(message.text);
     if (!plainText) {
-      await sendErrorDM(client, userId, 'The message had no translatable text content.', logger);
+      try {
+        await client.chat.postMessage({
+          channel: event.item.channel,
+          thread_ts: event.item.ts,
+          text: `:${reaction}: This message has no translatable text content.`,
+        });
+      } catch (replyError) {
+        logger.error('Failed to post non-text error reply:', replyError);
+      }
       return;
     }
 
