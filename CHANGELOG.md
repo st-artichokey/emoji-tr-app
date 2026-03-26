@@ -1,5 +1,10 @@
 # Changelog
 
+## docs: Add session log entries for GIF and token conventions
+
+- Added session log entries for token/model placeholders, GIF convention, and GIF appropriateness discussion
+- Documents why the initial *Clue* movie GIF was replaced with a stop-motion organizing animation
+
 ## docs: Add thematic GIFs and model/token placeholders to session logs
 
 - Added 200px thematic GIFs to both session logs (coding animation for 03-25, stop-motion organizing for 03-26)
