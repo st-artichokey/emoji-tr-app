@@ -1,12 +1,19 @@
 # Changelog
 
+## feat: Include country name in unsupported flag reply
+
+- Unsupported flag reply now includes the country name (e.g. "Sorry, translation for Antarctica is not supported.")
+- Added `COUNTRY_NAMES` map with all 249 ISO 3166-1 alpha-2 codes and `getCountryName()` helper to `languages.js`
+- Falls back to uppercase country code for any unrecognized codes
+- Added `getCountryName` tests in `tests/languages.spec.js`
+- Total tests: 55
+
 ## feat: Reply when unsupported flag emoji is used
 
 - When a user reacts with a flag emoji that has no supported language mapping, the bot now replies in the thread with the emoji and a "not supported" message
 - Non-flag reactions (e.g. thumbsup) are still silently ignored
 - Detects both 2-letter country codes and `flag-xx` format emoji
 - Added 3 tests covering the new behavior (unmapped short code, unmapped flag-xx, error handling)
-- Total tests: 52
 
 ## feat: Remove /translate command and modal
 

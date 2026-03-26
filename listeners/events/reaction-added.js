@@ -1,4 +1,4 @@
-import { FLAG_TO_LANGUAGE, getLanguageName } from '../languages.js';
+import { FLAG_TO_LANGUAGE, getCountryName, getLanguageName } from '../languages.js';
 import { sendDM } from '../slack-helpers.js';
 import { stripSlackFormatting, translateText } from '../translate.js';
 
@@ -22,11 +22,13 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
 
   if (!targetLang) {
     if (isFlagEmoji(reaction)) {
+      const countryCode = reaction.replace('flag-', '');
+      const countryName = getCountryName(countryCode);
       try {
         await client.chat.postMessage({
           channel: event.item.channel,
           thread_ts: event.item.ts,
-          text: `:${reaction}: Sorry, that language is not supported.`,
+          text: `:${reaction}: Sorry, translation for ${countryName} is not supported.`,
         });
       } catch (error) {
         logger.error('Failed to post unsupported language reply:', error);

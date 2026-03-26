@@ -84,6 +84,7 @@ describe('reaction-added', () => {
     assert.strictEqual(msgArgs.channel, 'C123');
     assert.strictEqual(msgArgs.thread_ts, '1234.5678');
     assert.ok(msgArgs.text.includes(':aq:'));
+    assert.ok(msgArgs.text.includes('Antarctica'));
     assert.ok(msgArgs.text.includes('not supported'));
   });
 
@@ -99,6 +100,7 @@ describe('reaction-added', () => {
     assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 1);
     const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
     assert.ok(msgArgs.text.includes(':flag-aq:'));
+    assert.ok(msgArgs.text.includes('Antarctica'));
     assert.ok(msgArgs.text.includes('not supported'));
   });
 

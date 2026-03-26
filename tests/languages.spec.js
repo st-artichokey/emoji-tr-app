@@ -1,6 +1,6 @@
 import assert from 'node:assert';
 import { describe, it } from 'node:test';
-import { getLanguageName } from '../listeners/languages.js';
+import { getCountryName, getLanguageName } from '../listeners/languages.js';
 
 describe('getLanguageName', () => {
   it('should return target language name for a target code', () => {
@@ -17,5 +17,19 @@ describe('getLanguageName', () => {
 
   it('should prefer target name over source name', () => {
     assert.strictEqual(getLanguageName('en-GB'), 'English (British)');
+  });
+});
+
+describe('getCountryName', () => {
+  it('should return country name for a known code', () => {
+    assert.strictEqual(getCountryName('jp'), 'Japan');
+  });
+
+  it('should return country name for territories', () => {
+    assert.strictEqual(getCountryName('aq'), 'Antarctica');
+  });
+
+  it('should fall back to uppercase code for unknown codes', () => {
+    assert.strictEqual(getCountryName('zz'), 'ZZ');
   });
 });
