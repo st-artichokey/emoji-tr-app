@@ -7,6 +7,7 @@
 - Removed `commands` OAuth scope from `manifest.json`
 - Removed corresponding test files and directories (`tests/commands/`, `tests/views/`)
 - Updated `listeners/index.js` and `tests/listeners-index.spec.js` to reflect simplified registration
+- Removed `/translate` references from App Home usage instructions
 - Total tests: 49 (down from 69), all remaining source files still have direct coverage
 
 ## test: Improve coverage and replace experimental module mocking

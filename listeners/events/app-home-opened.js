@@ -32,13 +32,9 @@ const appHomeOpenedCallback = async ({ client, event, logger }) => {
             text: {
               type: 'mrkdwn',
               text: [
-                '*Two ways to translate:*',
+                '*How to translate:*',
                 '',
-                '*1. Flag emoji reaction (quick)*',
                 'React to any message with a country flag emoji and the bot will auto-detect the source language and reply with the translation in a thread.',
-                '',
-                '*2. `/translate` command (full control)*',
-                'Use `/translate` to open a dialog where you can pick any source and target language from all supported languages, then enter text to translate.',
               ].join('\n'),
             },
           },
