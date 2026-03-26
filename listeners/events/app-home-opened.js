@@ -3,6 +3,10 @@ import { FLAG_TO_LANGUAGE, getLanguageName } from '../languages.js';
 /**
  * Publishes the App Home tab with usage instructions and the list of supported flags.
  * Only fires for the "home" tab; other tabs (e.g. messages) are ignored.
+ * @param {object} args - Bolt event callback arguments.
+ * @param {import('@slack/bolt').WebClient} args.client - Slack Web API client.
+ * @param {object} args.event - The app_home_opened event payload.
+ * @param {object} args.logger - Bolt logger instance.
  */
 const appHomeOpenedCallback = async ({ client, event, logger }) => {
   if (event.tab !== 'home') return;
@@ -53,9 +57,7 @@ const appHomeOpenedCallback = async ({ client, event, logger }) => {
           { type: 'divider' },
           {
             type: 'context',
-            elements: [
-              { type: 'mrkdwn', text: 'Powered by DeepL Translate' },
-            ],
+            elements: [{ type: 'mrkdwn', text: 'Powered by DeepL Translate' }],
           },
         ],
       },

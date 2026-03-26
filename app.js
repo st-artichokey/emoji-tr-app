@@ -1,7 +1,7 @@
 import { App, LogLevel } from '@slack/bolt';
 import { config } from 'dotenv';
-import { registerListeners } from './listeners/index.js';
 import { joinAllPublicChannels } from './listeners/events/channel-join.js';
+import { registerListeners } from './listeners/index.js';
 
 config();
 

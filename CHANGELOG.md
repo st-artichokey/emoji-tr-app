@@ -1,5 +1,10 @@
 # Changelog
 
+## fix: Apply CONTRIBUTING.md conventions to existing code
+
+- Fixed 5 Biome lint/formatting violations across `app.js`, `app-home-opened.js`, `reaction-added.js`, `languages.js`, and `translate.js`
+- Added missing `@param` and `@returns` JSDoc tags to 8 exported functions: `registerListeners`, `register`, `joinAllPublicChannels`, `channelCreatedCallback`, `appHomeOpenedCallback`, `isFlagEmoji`, `reactionAddedCallback`, `sendDM`
+
 ## docs: Add CONTRIBUTING.md with AI and non-AI contributor guides
 
 - Added `CONTRIBUTING.md` with project conventions, setup instructions, and PR guidelines

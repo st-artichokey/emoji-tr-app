@@ -4,9 +4,10 @@ import { stripSlackFormatting, translateText } from '../translate.js';
 /**
  * Checks whether a Slack reaction name looks like a country flag emoji.
  * Matches both 2-letter ISO codes ("fr") and the "flag-xx" format ("flag-fr").
+ * @param {string} reaction - The Slack reaction name.
+ * @returns {boolean} True if the reaction looks like a flag emoji.
  */
-const isFlagEmoji = (reaction) =>
-  /^flag-[a-z]{2}$/.test(reaction) || /^[a-z]{2}$/.test(reaction);
+const isFlagEmoji = (reaction) => /^flag-[a-z]{2}$/.test(reaction) || /^[a-z]{2}$/.test(reaction);
 
 /**
  * Handles reaction_added events by translating the reacted-to message.
@@ -18,6 +19,10 @@ const isFlagEmoji = (reaction) =>
  *     bot/slash-command output, file uploads, or mentions-only messages).
  *  4. Translate via DeepL and post the result as a threaded reply.
  *  5. On translation failure, reply in the thread with the error details.
+ * @param {object} args - Bolt event callback arguments.
+ * @param {object} args.event - The reaction_added event payload.
+ * @param {import('@slack/bolt').WebClient} args.client - Slack Web API client.
+ * @param {object} args.logger - Bolt logger instance.
  */
 const reactionAddedCallback = async ({ event, client, logger }) => {
   const reaction = event.reaction;

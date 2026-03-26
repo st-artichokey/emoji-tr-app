@@ -10,10 +10,10 @@ import * as deepl from 'deepl-node';
  */
 const stripSlackFormatting = (text) => {
   return text
-    .replace(/<@[A-Z0-9]+>/g, '')             // remove user mentions
+    .replace(/<@[A-Z0-9]+>/g, '') // remove user mentions
     .replace(/<#[A-Z0-9]+\|([^>]+)>/g, '#$1') // #channel links
-    .replace(/<([^|>]+)\|([^>]+)>/g, '$2')     // <url|label> -> label
-    .replace(/<([^>]+)>/g, '$1')               // <url> -> url
+    .replace(/<([^|>]+)\|([^>]+)>/g, '$2') // <url|label> -> label
+    .replace(/<([^>]+)>/g, '$1') // <url> -> url
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')

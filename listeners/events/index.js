@@ -4,6 +4,7 @@ import { reactionAddedCallback } from './reaction-added.js';
 
 /**
  * Registers all Slack event listeners on the Bolt app instance.
+ * @param {import('@slack/bolt').App} app - The Bolt app instance.
  */
 export const register = (app) => {
   app.event('app_home_opened', appHomeOpenedCallback);
