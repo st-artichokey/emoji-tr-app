@@ -14,6 +14,8 @@ const tryJoinChannel = async (client, channelId, channelName, logger) => {
 /**
  * Joins all public channels in the workspace.
  * Paginates through conversations.list to find channels the bot is not yet a member of.
+ * @param {import('@slack/bolt').WebClient} client - Slack Web API client.
+ * @param {object} logger - Bolt logger instance.
  */
 const joinAllPublicChannels = async (client, logger) => {
   try {
@@ -48,6 +50,10 @@ const joinAllPublicChannels = async (client, logger) => {
 
 /**
  * Handles channel_created events by joining newly created public channels.
+ * @param {object} args - Bolt event callback arguments.
+ * @param {object} args.event - The channel_created event payload.
+ * @param {import('@slack/bolt').WebClient} args.client - Slack Web API client.
+ * @param {object} args.logger - Bolt logger instance.
  */
 const channelCreatedCallback = async ({ event, client, logger }) => {
   const success = await tryJoinChannel(client, event.channel.id, event.channel.name, logger);

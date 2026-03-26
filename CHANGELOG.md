@@ -1,5 +1,44 @@
 # Changelog
 
+## docs: Add session log entry for contributing audit approach
+
+- Documented why Bash (`npm run lint`, `npm test`) and Explore subagents were used to verify CONTRIBUTING.md compliance
+
+## docs: Add session log entries for GIF and token conventions
+
+- Added session log entries for token/model placeholders, GIF convention, and GIF appropriateness discussion
+- Documents why the initial *Clue* movie GIF was replaced with a stop-motion organizing animation
+
+## docs: Add thematic GIFs and model/token placeholders to session logs
+
+- Added 200px thematic GIFs to both session logs (coding animation for 03-25, stop-motion organizing for 03-26)
+- Added model version and token/cost placeholder fields to Stats sections
+
+## docs: Update session log with prompts from current session
+
+- Added entries for README rewrite, DM diagnosis, thread reply refactor, CONTRIBUTING.md, and lint/JSDoc compliance fix
+- Updated stats to reflect current branch (`update-readme`), commit count (20), and test count (68)
+- Established convention to update session logs in the same commit as CHANGELOG
+
+## fix: Apply CONTRIBUTING.md conventions to existing code
+
+- Fixed 5 Biome lint/formatting violations across `app.js`, `app-home-opened.js`, `reaction-added.js`, `languages.js`, and `translate.js`
+- Added missing `@param` and `@returns` JSDoc tags to 8 exported functions: `registerListeners`, `register`, `joinAllPublicChannels`, `channelCreatedCallback`, `appHomeOpenedCallback`, `isFlagEmoji`, `reactionAddedCallback`, `sendDM`
+
+## docs: Add CONTRIBUTING.md with AI and non-AI contributor guides
+
+- Added `CONTRIBUTING.md` with project conventions, setup instructions, and PR guidelines
+- Includes separate workflow sections for contributors using AI and those not using AI
+- Covers common AI pitfalls (phantom code, silent test passes, scope creep) and what to verify
+- Explains why the two sections exist and how the risk profiles differ
+
+## refactor: Replace DM errors with thread replies and rewrite README
+
+- Replaced all DM-based error notifications with thread replies in `reaction-added.js`
+- Removed `sendErrorDM` function and `sendDM` import (eliminates `im:write` scope dependency)
+- Updated 4 tests from DM assertions to thread reply assertions
+- Rewrote `README.md` with current features, repo name, demo screenshots, and accurate project structure
+
 ## docs: Add session logs
 
 - Added `claude-session-logs/session-2026-03-25.md` and `claude-session-logs/session-2026-03-26.md`

@@ -31,9 +31,6 @@ describe('reaction-added', () => {
         history: mock.fn(async () => ({
           messages: [{ text: 'Hello world' }],
         })),
-        open: mock.fn(async () => ({
-          channel: { id: 'D_DM' },
-        })),
       },
       chat: {
         postMessage: mock.fn(),
@@ -242,31 +239,32 @@ describe('reaction-added', () => {
       assert.ok(msgArgs.text.includes('no text content'));
     });
 
-    it('should DM user when conversations.history throws', async () => {
+    it('should reply in thread when conversations.history throws', async () => {
       fakeClient.conversations.history = mock.fn(async () => { throw new Error('history failed'); });
 
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
       assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
-      assert.ok(dmMsg.text.includes('history failed'));
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes('history failed'));
     });
 
-    it('should DM user when posting translation reply fails', async () => {
+    it('should log error when both translation and error reply fail', async () => {
       let callCount = 0;
       fakeClient.chat.postMessage = mock.fn(async () => {
         callCount++;
         if (callCount === 1) throw new Error('post failed');
+        throw new Error('error reply also failed');
       });
 
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
-      // Second call is the error DM
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[1].arguments[0];
-      assert.ok(dmMsg.text.includes('post failed'));
+      // First error is from translation failure, second from the error reply failure
+      assert.strictEqual(fakeLogger.error.mock.callCount(), 2);
     });
 
     it('should reply in thread when message has no text', async () => {
@@ -299,17 +297,19 @@ describe('reaction-added', () => {
       assert.ok(msgArgs.text.includes('no translatable text'));
     });
 
-    it('should DM user when DEEPL_API_KEY is not set', async () => {
+    it('should reply in thread when DEEPL_API_KEY is not set', async () => {
       delete process.env.DEEPL_API_KEY;
 
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
-      assert.ok(dmMsg.text.includes('not set'));
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes('not set'));
     });
 
-    it('should DM user when translation fails', async () => {
+    it('should reply in thread when translation fails', async () => {
       mockTranslateText.mock.mockImplementation(async () => {
         throw new Error('DeepL API error');
       });
@@ -317,9 +317,11 @@ describe('reaction-added', () => {
       const event = { reaction: 'fr', user: 'U_USER', item: { channel: 'C123', ts: '1234.5678' } };
       await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
 
-      const dmMsg = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
-      assert.ok(dmMsg.text.includes('French'));
-      assert.ok(dmMsg.text.includes('DeepL API error'));
+      const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+      assert.strictEqual(msgArgs.channel, 'C123');
+      assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+      assert.ok(msgArgs.text.includes('French'));
+      assert.ok(msgArgs.text.includes('DeepL API error'));
     });
 
     it('should reply in thread when message is from a bot', async () => {
