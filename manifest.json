@@ -16,14 +16,7 @@
         "bot_user": {
             "display_name": "claude-slack-app-demo",
             "always_online": false
-        },
-        "slash_commands": [
-            {
-                "command": "/translate",
-                "description": "Show translation help and supported languages",
-                "should_escape": false
-            }
-        ]
+        }
     },
     "oauth_config": {
         "scopes": {
@@ -34,7 +27,6 @@
                 "groups:history",
                 "chat:write",
                 "chat:write.public",
-                "commands",
                 "im:write",
                 "reactions:read"
             ]

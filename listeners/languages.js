@@ -125,13 +125,4 @@ const FLAG_TO_LANGUAGE = {
  */
 const getLanguageName = (code) => TARGET_LANGUAGES[code] || SOURCE_LANGUAGES[code] || code;
 
-/**
- * Convert a language map into Slack static_select options.
- */
-const toSelectOptions = (langMap) =>
-  Object.entries(langMap).map(([code, name]) => ({
-    text: { type: 'plain_text', text: name },
-    value: code,
-  }));
-
-export { SOURCE_LANGUAGES, TARGET_LANGUAGES, FLAG_TO_LANGUAGE, getLanguageName, toSelectOptions };
+export { TARGET_LANGUAGES, FLAG_TO_LANGUAGE, getLanguageName };

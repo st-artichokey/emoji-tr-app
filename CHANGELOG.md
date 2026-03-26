@@ -1,5 +1,14 @@
 # Changelog
 
+## feat: Remove /translate command and modal
+
+- Removed `/translate` slash command, modal view, and all associated listeners (`commands/`, `views/`)
+- Removed `toSelectOptions()` helper and `SOURCE_LANGUAGES` export (no longer needed)
+- Removed `commands` OAuth scope from `manifest.json`
+- Removed corresponding test files and directories (`tests/commands/`, `tests/views/`)
+- Updated `listeners/index.js` and `tests/listeners-index.spec.js` to reflect simplified registration
+- Total tests: 49 (down from 69), all remaining source files still have direct coverage
+
 ## test: Improve coverage and replace experimental module mocking
 
 - Replaced experimental `mock.module()` with `esmock` in 3 test files, removing the `--experimental-test-module-mocks` flag
