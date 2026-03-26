@@ -1,9 +1,9 @@
 # Changelog
 
-## docs: Add session summary
+## docs: Add session logs
 
-- Added `docs/session-2026-03-26.md` documenting all work completed during the session
-- Each prompt section includes linked references to Slack API docs, DeepL docs, ISO standards, and npm packages
+- Added `claude-session-logs/session-2026-03-25.md` and `claude-session-logs/session-2026-03-26.md`
+- Each session documents all prompts, changes made, and linked references to external documentation
 
 ## fix: Reuse DeepL Translator instance and fix app-oauth.js
 
