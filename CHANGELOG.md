@@ -1,5 +1,9 @@
 # Changelog
 
+## docs: Add DeepL supported languages reference link
+
+- Added link to DeepL supported languages docs in `languages.js`
+
 ## docs: Add JSDoc and inline comments across all source files
 
 - Added JSDoc with `@param`/`@returns` to `sendDM`, `getLanguageName`, `getCountryName`, `stripSlackFormatting`

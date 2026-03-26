@@ -1,5 +1,6 @@
 // DeepL-supported source language codes -> display names.
 // Used internally by getLanguageName() as a fallback when a code isn't in TARGET_LANGUAGES.
+// See: https://developers.deepl.com/docs/getting-started/supported-languages
 const SOURCE_LANGUAGES = {
   'auto': 'Auto-detect',
   'ar': 'Arabic',
