@@ -1,5 +1,13 @@
 # Changelog
 
+## docs: Add JSDoc and inline comments across all source files
+
+- Added JSDoc with `@param`/`@returns` to `sendDM`, `getLanguageName`, `getCountryName`, `stripSlackFormatting`
+- Added method-level JSDoc to `reactionAddedCallback` (full flow description), `appHomeOpenedCallback`, `isFlagEmoji`, `register`, `registerListeners`
+- Added inline comments to `reaction-added.js` guard clauses (bot_id, files, empty text, stripped text)
+- Improved data structure descriptions on `SOURCE_LANGUAGES`, `TARGET_LANGUAGES`, `FLAG_TO_LANGUAGE`
+- Clarified `app.js` initialization, listener registration, and auto-join purpose
+
 ## feat: Skip translation of bot messages, file uploads, and non-text messages
 
 - Bot/slash command messages (e.g. `/giphy`) now get a thread reply: "Translation of bot and slash command messages is not supported." (detected via `message.bot_id`)

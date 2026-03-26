@@ -1,7 +1,12 @@
 import * as deepl from 'deepl-node';
 
 /**
- * Strip Slack mrkdwn formatting to get plain text for translation.
+ * Strips Slack mrkdwn formatting to produce plain text suitable for translation.
+ * Removes user mentions, converts channel links to #name, extracts URL labels,
+ * and decodes HTML entities (&amp; &lt; &gt;). Returns empty string for
+ * whitespace-only or mention-only input.
+ * @param {string} text - Raw Slack message text with mrkdwn formatting.
+ * @returns {string} Plain text with all Slack-specific markup removed.
  */
 const stripSlackFormatting = (text) => {
   return text

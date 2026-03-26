@@ -1,5 +1,8 @@
 /**
- * Send a DM to a Slack user.
+ * Opens a DM conversation with a user and sends them a message.
+ * @param {object} client - Slack Web API client.
+ * @param {string} userId - The Slack user ID to DM.
+ * @param {string} text - The message text to send.
  */
 const sendDM = async (client, userId, text) => {
   const dm = await client.conversations.open({ users: userId });

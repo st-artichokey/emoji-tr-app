@@ -1,4 +1,5 @@
-// All DeepL-supported source languages (code -> display name)
+// DeepL-supported source language codes -> display names.
+// Used internally by getLanguageName() as a fallback when a code isn't in TARGET_LANGUAGES.
 const SOURCE_LANGUAGES = {
   'auto': 'Auto-detect',
   'ar': 'Arabic',
@@ -33,7 +34,8 @@ const SOURCE_LANGUAGES = {
   'zh': 'Chinese',
 };
 
-// All DeepL-supported target languages (code -> display name)
+// DeepL-supported target language codes -> display names.
+// These are the languages users can translate into via flag reactions.
 const TARGET_LANGUAGES = {
   'ar': 'Arabic',
   'bg': 'Bulgarian',
@@ -70,9 +72,9 @@ const TARGET_LANGUAGES = {
   'zh-HANT': 'Chinese (Traditional)',
 };
 
-// Map Slack flag emoji reaction names to DeepL target language codes.
-// Slack sends flag emoji reactions as the ISO country code (e.g. "fr", "us", "jp").
-// Both short and flag-xx formats are supported.
+// Maps Slack flag emoji reaction names to DeepL target language codes.
+// Slack sends flag reactions as either a 2-letter ISO code ("fr") or "flag-xx" ("flag-fr").
+// Multiple countries can map to the same language (e.g. ar, mx, co -> es for Spanish).
 const FLAG_TO_LANGUAGE = {
   // Direct language matches
   'bg': 'bg',    'cz': 'cs',    'dk': 'da',    'de': 'de',    'gr': 'el',
@@ -178,12 +180,18 @@ const COUNTRY_NAMES = {
 };
 
 /**
- * Look up the display name for a language code, checking both target and source maps.
+ * Returns the human-readable name for a DeepL language code.
+ * Checks target languages first, then source languages, falling back to the raw code.
+ * @param {string} code - A DeepL language code (e.g. "fr", "en-GB", "zh-HANS").
+ * @returns {string} The display name (e.g. "French", "English (British)").
  */
 const getLanguageName = (code) => TARGET_LANGUAGES[code] || SOURCE_LANGUAGES[code] || code;
 
 /**
- * Look up the country name for a 2-letter ISO country code.
+ * Returns the country name for a 2-letter ISO 3166-1 alpha-2 code.
+ * Falls back to the uppercase code if not found in the COUNTRY_NAMES map.
+ * @param {string} code - A lowercase ISO country code (e.g. "fr", "aq").
+ * @returns {string} The country name (e.g. "France", "Antarctica").
  */
 const getCountryName = (code) => COUNTRY_NAMES[code] || code.toUpperCase();
 

@@ -5,7 +5,7 @@ import { joinAllPublicChannels } from './listeners/events/channel-join.js';
 
 config();
 
-/** Initialization */
+// Initialize the Bolt app with Socket Mode for local development
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
   socketMode: true,
@@ -13,16 +13,16 @@ const app = new App({
   logLevel: LogLevel.DEBUG,
 });
 
-/** Register Listeners */
+// Wire up all event listeners (reaction_added, channel_created, app_home_opened)
 registerListeners(app);
 
-/** Start the Bolt App */
+// Start the app and auto-join all public channels so the bot can receive
+// reaction events in every channel without needing a manual invite.
 (async () => {
   try {
     await app.start();
     app.logger.info('Bolt app is running!');
 
-    // Join all public channels so the bot can receive reaction events
     await joinAllPublicChannels(app.client, app.logger);
   } catch (error) {
     app.logger.error('Failed to start the app', error);

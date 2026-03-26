@@ -1,5 +1,9 @@
 import { FLAG_TO_LANGUAGE, getLanguageName } from '../languages.js';
 
+/**
+ * Publishes the App Home tab with usage instructions and the list of supported flags.
+ * Only fires for the "home" tab; other tabs (e.g. messages) are ignored.
+ */
 const appHomeOpenedCallback = async ({ client, event, logger }) => {
   if (event.tab !== 'home') return;
 
