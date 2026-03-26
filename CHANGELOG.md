@@ -2,7 +2,8 @@
 
 ## docs: Add session summary
 
-- Added `docs/session-summary.md` documenting all work completed during the session
+- Added `docs/session-2026-03-26.md` documenting all work completed during the session
+- Each prompt section includes sources used (files read, APIs referenced, model knowledge)
 
 ## fix: Reuse DeepL Translator instance and fix app-oauth.js
 
