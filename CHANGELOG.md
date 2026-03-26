@@ -3,7 +3,7 @@
 ## docs: Add session summary
 
 - Added `docs/session-2026-03-26.md` documenting all work completed during the session
-- Each prompt section includes sources used (files read, APIs referenced, model knowledge)
+- Each prompt section includes linked references to Slack API docs, DeepL docs, ISO standards, and npm packages
 
 ## fix: Reuse DeepL Translator instance and fix app-oauth.js
 
