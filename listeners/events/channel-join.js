@@ -1,4 +1,17 @@
 /**
+ * Attempt to join a channel, logging success or failure.
+ */
+const tryJoinChannel = async (client, channelId, channelName, logger) => {
+  try {
+    await client.conversations.join({ channel: channelId });
+    return true;
+  } catch (error) {
+    logger.error(`Failed to join #${channelName}: ${error.message}`);
+    return false;
+  }
+};
+
+/**
  * Joins all public channels in the workspace.
  * Paginates through conversations.list to find channels the bot is not yet a member of.
  */
@@ -17,12 +30,8 @@ const joinAllPublicChannels = async (client, logger) => {
 
       for (const channel of result.channels) {
         if (!channel.is_member) {
-          try {
-            await client.conversations.join({ channel: channel.id });
-            joined++;
-          } catch (joinError) {
-            logger.error(`Failed to join #${channel.name}: ${joinError.message}`);
-          }
+          const success = await tryJoinChannel(client, channel.id, channel.name, logger);
+          if (success) joined++;
         }
       }
 
@@ -41,11 +50,9 @@ const joinAllPublicChannels = async (client, logger) => {
  * Handles channel_created events by joining newly created public channels.
  */
 const channelCreatedCallback = async ({ event, client, logger }) => {
-  try {
-    await client.conversations.join({ channel: event.channel.id });
+  const success = await tryJoinChannel(client, event.channel.id, event.channel.name, logger);
+  if (success) {
     logger.info(`Joined new channel #${event.channel.name}`);
-  } catch (error) {
-    logger.error(`Failed to join new channel #${event.channel.name}: ${error.message}`);
   }
 };
 

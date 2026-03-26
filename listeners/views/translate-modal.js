@@ -1,4 +1,5 @@
-import { TARGET_LANGUAGES, SOURCE_LANGUAGES } from '../languages.js';
+import { getLanguageName } from '../languages.js';
+import { sendDM } from '../slack-helpers.js';
 import { translateText } from '../translate.js';
 
 const translateModalCallback = async ({ ack, view, body, client, logger }) => {
@@ -8,27 +9,22 @@ const translateModalCallback = async ({ ack, view, body, client, logger }) => {
   const targetLangCode = values.target_lang_block.target_lang_select.selected_option.value;
 
   const sourceLang = sourceLangCode === 'auto' ? null : sourceLangCode;
-  const targetName = TARGET_LANGUAGES[targetLangCode] || targetLangCode;
-  const sourceName = SOURCE_LANGUAGES[sourceLangCode] || sourceLangCode;
+  const targetName = getLanguageName(targetLangCode);
+  const sourceName = getLanguageName(sourceLangCode);
 
   try {
     const translatedText = await translateText(text, sourceLang, targetLangCode);
 
     await ack();
 
-    // DM the user the translation result
-    const dm = await client.conversations.open({ users: body.user.id });
     const fromLabel = sourceLang ? sourceName : 'Auto-detected';
-    await client.chat.postMessage({
-      channel: dm.channel.id,
-      text: [
-        `*Translation (${fromLabel} -> ${targetName}):*`,
-        '',
-        `> ${text}`,
-        '',
-        translatedText,
-      ].join('\n'),
-    });
+    await sendDM(client, body.user.id, [
+      `*Translation (${fromLabel} -> ${targetName}):*`,
+      '',
+      `> ${text}`,
+      '',
+      translatedText,
+    ].join('\n'));
   } catch (error) {
     logger.error('Modal translation failed:', error);
 

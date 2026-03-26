@@ -1,14 +1,7 @@
-import { SOURCE_LANGUAGES, TARGET_LANGUAGES } from '../languages.js';
+import { SOURCE_LANGUAGES, TARGET_LANGUAGES, toSelectOptions } from '../languages.js';
 
-const sourceOptions = Object.entries(SOURCE_LANGUAGES).map(([code, name]) => ({
-  text: { type: 'plain_text', text: name },
-  value: code,
-}));
-
-const targetOptions = Object.entries(TARGET_LANGUAGES).map(([code, name]) => ({
-  text: { type: 'plain_text', text: name },
-  value: code,
-}));
+const sourceOptions = toSelectOptions(SOURCE_LANGUAGES);
+const targetOptions = toSelectOptions(TARGET_LANGUAGES);
 
 const translateCommandCallback = async ({ ack, body, client, logger }) => {
   try {

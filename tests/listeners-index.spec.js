@@ -5,11 +5,8 @@ import { registerListeners } from '../listeners/index.js';
 describe('listeners/index', () => {
   it('should call all register functions', () => {
     const fakeApp = {
-      action: mock.fn(),
       command: mock.fn(),
       event: mock.fn(),
-      message: mock.fn(),
-      shortcut: mock.fn(),
       view: mock.fn(),
     };
 

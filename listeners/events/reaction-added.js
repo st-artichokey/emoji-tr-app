@@ -1,4 +1,5 @@
-import { FLAG_TO_LANGUAGE, TARGET_LANGUAGES } from '../languages.js';
+import { FLAG_TO_LANGUAGE, getLanguageName } from '../languages.js';
+import { sendDM } from '../slack-helpers.js';
 import { stripSlackFormatting, translateText } from '../translate.js';
 
 /**
@@ -6,11 +7,7 @@ import { stripSlackFormatting, translateText } from '../translate.js';
  */
 const sendErrorDM = async (client, userId, reason, logger) => {
   try {
-    const dm = await client.conversations.open({ users: userId });
-    await client.chat.postMessage({
-      channel: dm.channel.id,
-      text: `Sorry, I couldn't translate that message. ${reason}`,
-    });
+    await sendDM(client, userId, `Sorry, I couldn't translate that message. ${reason}`);
   } catch (dmError) {
     logger.error('Failed to send error DM:', dmError);
   }
@@ -23,7 +20,7 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
   if (!targetLang) return;
 
   const userId = event.user;
-  const langName = TARGET_LANGUAGES[targetLang] || targetLang;
+  const langName = getLanguageName(targetLang);
 
   try {
     const result = await client.conversations.history({

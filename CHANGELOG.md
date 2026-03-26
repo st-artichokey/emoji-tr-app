@@ -1,5 +1,15 @@
 # Changelog
 
+## refactor: DRY up listener utilities and remove empty stubs
+
+- Extracted `getLanguageName(code)` and `toSelectOptions(langMap)` helpers into `listeners/languages.js`
+- Created shared `listeners/slack-helpers.js` with `sendDM(client, userId, text)` utility
+- Replaced duplicate language option mapping in `translate-command.js` with `toSelectOptions()`
+- Replaced inline DM logic in `translate-modal.js` and `reaction-added.js` with shared `sendDM()`
+- Replaced repeated `LANGUAGES[code] || code` fallback in 3 files with `getLanguageName()`
+- Extracted `tryJoinChannel()` in `channel-join.js` to deduplicate join-and-log pattern
+- Removed empty stub directories (`actions/`, `messages/`, `shortcuts/`) and their dead imports
+
 ## feat: Add /translate command with modal for any-to-any translation (`fecf002`)
 
 - Added `/translate` slash command that opens a modal dialog

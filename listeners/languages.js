@@ -99,4 +99,18 @@ const FLAG_TO_LANGUAGE = {
   'flag-be': 'fr',    'flag-in': 'en-GB',
 };
 
-export { SOURCE_LANGUAGES, TARGET_LANGUAGES, FLAG_TO_LANGUAGE };
+/**
+ * Look up the display name for a language code, checking both target and source maps.
+ */
+const getLanguageName = (code) => TARGET_LANGUAGES[code] || SOURCE_LANGUAGES[code] || code;
+
+/**
+ * Convert a language map into Slack static_select options.
+ */
+const toSelectOptions = (langMap) =>
+  Object.entries(langMap).map(([code, name]) => ({
+    text: { type: 'plain_text', text: name },
+    value: code,
+  }));
+
+export { SOURCE_LANGUAGES, TARGET_LANGUAGES, FLAG_TO_LANGUAGE, getLanguageName, toSelectOptions };

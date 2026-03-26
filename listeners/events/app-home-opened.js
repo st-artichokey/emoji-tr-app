@@ -1,4 +1,4 @@
-import { FLAG_TO_LANGUAGE, TARGET_LANGUAGES } from '../languages.js';
+import { FLAG_TO_LANGUAGE, getLanguageName } from '../languages.js';
 
 const appHomeOpenedCallback = async ({ client, event, logger }) => {
   if (event.tab !== 'home') return;
@@ -6,7 +6,7 @@ const appHomeOpenedCallback = async ({ client, event, logger }) => {
   // Build the supported flag list (deduplicate by showing unique short-code flags only)
   const langList = Object.entries(FLAG_TO_LANGUAGE)
     .filter(([flag]) => !flag.startsWith('flag-'))
-    .map(([flag, code]) => `:${flag}: -> ${TARGET_LANGUAGES[code] || code}`)
+    .map(([flag, code]) => `:${flag}: -> ${getLanguageName(code)}`)
     .join('\n');
 
   try {
