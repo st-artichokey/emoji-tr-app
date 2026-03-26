@@ -1,5 +1,10 @@
 # Changelog
 
+## docs: Add thematic GIFs and model/token placeholders to session logs
+
+- Added 200px thematic GIFs to both session logs (coding animation for 03-25, stop-motion organizing for 03-26)
+- Added model version and token/cost placeholder fields to Stats sections
+
 ## docs: Update session log with prompts from current session
 
 - Added entries for README rewrite, DM diagnosis, thread reply refactor, CONTRIBUTING.md, and lint/JSDoc compliance fix
