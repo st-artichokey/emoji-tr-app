@@ -1,5 +1,11 @@
 # Changelog
 
+## fix: Reuse DeepL Translator instance and fix app-oauth.js
+
+- Refactored `translate.js` to lazily initialize a singleton `Translator` instance for connection pooling
+- Replaced hard-coded OAuth state secret with `process.env.SLACK_STATE_SECRET` in `app-oauth.js`
+- Updated OAuth scopes in `app-oauth.js` to match `manifest.json` (added `channels:join`, `channels:read`, `groups:history`, `chat:write.public`, `im:write`, `reactions:read`)
+
 ## docs: Add DeepL supported languages reference link
 
 - Added link to DeepL supported languages docs in `languages.js`

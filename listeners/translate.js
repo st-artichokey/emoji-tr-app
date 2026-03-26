@@ -28,14 +28,22 @@ const stripSlackFormatting = (text) => {
  * @returns {Promise<string>} The translated text.
  * @throws {Error} If DEEPL_API_KEY is not set or translation fails.
  */
-const translateText = async (text, sourceLang, targetLang) => {
+// Lazily initialized singleton — reused across calls for connection pooling
+let translator;
+
+const getTranslator = () => {
   const authKey = process.env.DEEPL_API_KEY;
   if (!authKey) {
     throw new Error('DEEPL_API_KEY is not set');
   }
+  if (!translator) {
+    translator = new deepl.Translator(authKey);
+  }
+  return translator;
+};
 
-  const translator = new deepl.Translator(authKey);
-  const result = await translator.translateText(text, sourceLang, targetLang);
+const translateText = async (text, sourceLang, targetLang) => {
+  const result = await getTranslator().translateText(text, sourceLang, targetLang);
 
   const translatedText = result?.text;
   if (!translatedText) {
