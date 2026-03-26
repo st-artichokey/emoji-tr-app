@@ -1,17 +1,18 @@
 import assert from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import esmock from 'esmock';
 
 const mockTranslateText = mock.fn();
-mock.module('deepl-node', {
-  namedExports: {
-    Translator: class MockTranslator {
-      constructor() {}
-      translateText = mockTranslateText;
+
+const { translateModalCallback } = await esmock('../../listeners/views/translate-modal.js', {
+  '../../listeners/translate.js': {
+    translateText: async (text, src, tgt) => {
+      const result = await mockTranslateText(text, src, tgt);
+      if (!result?.text) throw new Error('Translation returned an empty result');
+      return result.text;
     },
   },
 });
-
-const { translateModalCallback } = await import('../../listeners/views/translate-modal.js');
 
 describe('translate-modal', () => {
   let fakeAck;

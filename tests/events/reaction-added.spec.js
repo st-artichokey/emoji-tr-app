@@ -1,18 +1,20 @@
 import assert from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import esmock from 'esmock';
 
-// Mock deepl-node before importing the module under test
 const mockTranslateText = mock.fn();
-mock.module('deepl-node', {
-  namedExports: {
-    Translator: class MockTranslator {
-      constructor() {}
-      translateText = mockTranslateText;
+
+const { reactionAddedCallback } = await esmock('../../listeners/events/reaction-added.js', {
+  '../../listeners/translate.js': {
+    stripSlackFormatting: (await import('../../listeners/translate.js')).stripSlackFormatting,
+    translateText: async (text, src, tgt) => {
+      if (!process.env.DEEPL_API_KEY) throw new Error('DEEPL_API_KEY is not set');
+      const result = await mockTranslateText(text, src, tgt);
+      if (!result?.text) throw new Error('Translation returned an empty result');
+      return result.text;
     },
   },
 });
-
-const { reactionAddedCallback } = await import('../../listeners/events/reaction-added.js');
 const { FLAG_TO_LANGUAGE, TARGET_LANGUAGES } = await import('../../listeners/languages.js');
 
 describe('reaction-added', () => {

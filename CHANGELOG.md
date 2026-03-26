@@ -1,5 +1,15 @@
 # Changelog
 
+## test: Improve coverage and replace experimental module mocking
+
+- Replaced experimental `mock.module()` with `esmock` in 3 test files, removing the `--experimental-test-module-mocks` flag
+- Added tests for `getLanguageName()` and `toSelectOptions()` in new `tests/languages.spec.js`
+- Added tests for `sendDM()` in new `tests/slack-helpers.spec.js`
+- Added tests for `views/index.js register()` in new `tests/views/views-index.spec.js`
+- Unexported internal `sendErrorDM` from `reaction-added.js` (no external consumers)
+- Added 22 missing ISO 3166 country code mappings (Spanish, Arabic, German, French, Greek, Russian-speaking countries)
+- Total tests: 69 (up from 55), all listener source files now have direct test coverage
+
 ## refactor: DRY up listener utilities and remove empty stubs
 
 - Extracted `getLanguageName(code)` and `toSelectOptions(langMap)` helpers into `listeners/languages.js`

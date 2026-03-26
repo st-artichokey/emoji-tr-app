@@ -74,6 +74,7 @@ const TARGET_LANGUAGES = {
 // Slack sends flag emoji reactions as the ISO country code (e.g. "fr", "us", "jp").
 // Both short and flag-xx formats are supported.
 const FLAG_TO_LANGUAGE = {
+  // Direct language matches
   'bg': 'bg',    'cz': 'cs',    'dk': 'da',    'de': 'de',    'gr': 'el',
   'gb': 'en-GB', 'us': 'en-US', 'um': 'en-US', 'au': 'en-GB', 'ca': 'en-US',
   'ie': 'en-GB', 'nz': 'en-GB', 'es': 'es',    'ee': 'et',    'fi': 'fi',
@@ -82,8 +83,23 @@ const FLAG_TO_LANGUAGE = {
   'pl': 'pl',    'br': 'pt-BR', 'pt': 'pt-PT', 'ro': 'ro',    'ru': 'ru',
   'sk': 'sk',    'si': 'sl',    'se': 'sv',    'tr': 'tr',    'ua': 'uk',
   'cn': 'zh-HANS', 'tw': 'zh-HANT',
+  // Spanish-speaking countries
   'ar': 'es',    'mx': 'es',    'co': 'es',    'cl': 'es',    'pe': 'es',
-  'at': 'de',    'ch': 'de',    'be': 'fr',    'in': 'en-GB',
+  'bo': 'es',    'cr': 'es',    'cu': 'es',    'do': 'es',    'ec': 'es',
+  'gt': 'es',    'hn': 'es',    'ni': 'es',    'pa': 'es',    'py': 'es',
+  'uy': 'es',    've': 'es',
+  // German-speaking countries
+  'at': 'de',    'ch': 'de',    'li': 'de',
+  // French-speaking countries
+  'be': 'fr',    'lu': 'fr',
+  // English-speaking countries
+  'in': 'en-GB',
+  // Arabic-speaking countries
+  'eg': 'ar',    'iq': 'ar',    'jo': 'ar',    'sa': 'ar',
+  // Greek-speaking countries
+  'cy': 'el',
+  // Russian-speaking countries
+  'kz': 'ru',
   // flag-xx format
   'flag-bg': 'bg',    'flag-cz': 'cs',    'flag-dk': 'da',    'flag-de': 'de',
   'flag-gr': 'el',    'flag-gb': 'en-GB', 'flag-us': 'en-US', 'flag-um': 'en-US',
@@ -97,6 +113,11 @@ const FLAG_TO_LANGUAGE = {
   'flag-tw': 'zh-HANT', 'flag-ar': 'es', 'flag-mx': 'es',    'flag-co': 'es',
   'flag-cl': 'es',    'flag-pe': 'es',    'flag-at': 'de',    'flag-ch': 'de',
   'flag-be': 'fr',    'flag-in': 'en-GB',
+  'flag-bo': 'es',    'flag-cr': 'es',    'flag-cu': 'es',    'flag-do': 'es',
+  'flag-ec': 'es',    'flag-gt': 'es',    'flag-hn': 'es',    'flag-ni': 'es',
+  'flag-pa': 'es',    'flag-py': 'es',    'flag-uy': 'es',    'flag-ve': 'es',
+  'flag-li': 'de',    'flag-lu': 'fr',    'flag-eg': 'ar',    'flag-iq': 'ar',
+  'flag-jo': 'ar',    'flag-sa': 'ar',    'flag-cy': 'el',    'flag-kz': 'ru',
 };
 
 /**

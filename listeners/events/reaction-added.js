@@ -60,4 +60,4 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
   }
 };
 
-export { reactionAddedCallback, sendErrorDM };
+export { reactionAddedCallback };

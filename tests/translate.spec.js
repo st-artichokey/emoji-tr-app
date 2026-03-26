@@ -1,17 +1,17 @@
 import assert from 'node:assert';
 import { afterEach, beforeEach, describe, it, mock } from 'node:test';
+import esmock from 'esmock';
 
 const mockTranslateText = mock.fn();
-mock.module('deepl-node', {
-  namedExports: {
+
+const { stripSlackFormatting, translateText } = await esmock('../listeners/translate.js', {
+  'deepl-node': {
     Translator: class MockTranslator {
       constructor() {}
       translateText = mockTranslateText;
     },
   },
 });
-
-const { stripSlackFormatting, translateText } = await import('../listeners/translate.js');
 
 describe('stripSlackFormatting', () => {
   it('should remove user mentions', () => {
