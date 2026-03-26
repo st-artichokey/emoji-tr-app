@@ -1,17 +1,5 @@
 import { FLAG_TO_LANGUAGE, getCountryName, getLanguageName } from '../languages.js';
-import { sendDM } from '../slack-helpers.js';
 import { stripSlackFormatting, translateText } from '../translate.js';
-
-/**
- * Sends a DM to a user explaining that translation failed.
- */
-const sendErrorDM = async (client, userId, reason, logger) => {
-  try {
-    await sendDM(client, userId, `Sorry, I couldn't translate that message. ${reason}`);
-  } catch (dmError) {
-    logger.error('Failed to send error DM:', dmError);
-  }
-};
 
 /**
  * Checks whether a Slack reaction name looks like a country flag emoji.
@@ -29,7 +17,7 @@ const isFlagEmoji = (reaction) =>
  *  3. Fetch the original message and reject non-translatable content (no text,
  *     bot/slash-command output, file uploads, or mentions-only messages).
  *  4. Translate via DeepL and post the result as a threaded reply.
- *  5. On translation failure, DM the reacting user with the error details.
+ *  5. On translation failure, reply in the thread with the error details.
  */
 const reactionAddedCallback = async ({ event, client, logger }) => {
   const reaction = event.reaction;
@@ -53,7 +41,6 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
     return;
   }
 
-  const userId = event.user;
   const langName = getLanguageName(targetLang);
 
   try {
@@ -136,12 +123,15 @@ const reactionAddedCallback = async ({ event, client, logger }) => {
     });
   } catch (error) {
     logger.error('Translation failed:', error);
-    await sendErrorDM(
-      client,
-      userId,
-      `Translation to ${langName} failed: ${error.message}`,
-      logger,
-    );
+    try {
+      await client.chat.postMessage({
+        channel: event.item.channel,
+        thread_ts: event.item.ts,
+        text: `:${reaction}: Sorry, translation to ${langName} failed: ${error.message}`,
+      });
+    } catch (replyError) {
+      logger.error('Failed to post translation error reply:', replyError);
+    }
   }
 };
 

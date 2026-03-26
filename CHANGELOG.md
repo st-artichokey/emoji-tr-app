@@ -1,5 +1,12 @@
 # Changelog
 
+## refactor: Replace DM errors with thread replies and rewrite README
+
+- Replaced all DM-based error notifications with thread replies in `reaction-added.js`
+- Removed `sendErrorDM` function and `sendDM` import (eliminates `im:write` scope dependency)
+- Updated 4 tests from DM assertions to thread reply assertions
+- Rewrote `README.md` with current features, repo name, demo screenshots, and accurate project structure
+
 ## docs: Add session logs
 
 - Added `claude-session-logs/session-2026-03-25.md` and `claude-session-logs/session-2026-03-26.md`
