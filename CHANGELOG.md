@@ -1,5 +1,12 @@
 # Changelog
 
+## docs: Add CONTRIBUTING.md with AI and non-AI contributor guides
+
+- Added `CONTRIBUTING.md` with project conventions, setup instructions, and PR guidelines
+- Includes separate workflow sections for contributors using AI and those not using AI
+- Covers common AI pitfalls (phantom code, silent test passes, scope creep) and what to verify
+- Explains why the two sections exist and how the risk profiles differ
+
 ## refactor: Replace DM errors with thread replies and rewrite README
 
 - Replaced all DM-based error notifications with thread replies in `reaction-added.js`
