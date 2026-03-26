@@ -1,7 +1,7 @@
 {
-  "name": "claude-slack-app-demo",
+  "name": "emoji-tr-app",
   "version": "1.0.0",
-  "description": "A scaffold template for Slack apps",
+  "description": "An emoji-reactive message translator app",
   "type": "module",
   "main": "app.js",
   "scripts": {
@@ -11,19 +11,20 @@
     "start": "node app.js",
     "test": "node --test 'tests/**/*.spec.js' 'tests/*.spec.js'"
   },
-  "author": "Slack Technologies, LLC",
+  "author": "Rosanne Ussery",
   "license": "MIT",
   "keywords": [
     "slack",
     "bolt",
-    "slackapi"
+    "slackapi",
+    "deepl"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/slack-samples/bolt-js-starter-template.git"
+    "url": "https://github.com/st-artichokey/emoji-tr-app"
   },
   "bugs": {
-    "url": "https://github.com/slack-samples/bolt-js-starter-template/issues"
+    "url": "https://github.com/st-artichokey/emoji-tr-app/issues"
   },
   "dependencies": {
     "@slack/bolt": "^4.6.0",
