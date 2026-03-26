@@ -66,6 +66,53 @@ describe('reaction-added', () => {
 
     await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
     assert.strictEqual(fakeClient.conversations.history.mock.callCount(), 0);
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 0);
+  });
+
+  it('should reply with unsupported message for unmapped flag emoji', async () => {
+    const event = {
+      reaction: 'aq',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+    assert.strictEqual(fakeClient.conversations.history.mock.callCount(), 0);
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 1);
+    const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+    assert.strictEqual(msgArgs.channel, 'C123');
+    assert.strictEqual(msgArgs.thread_ts, '1234.5678');
+    assert.ok(msgArgs.text.includes(':aq:'));
+    assert.ok(msgArgs.text.includes('not supported'));
+  });
+
+  it('should reply with unsupported message for unmapped flag-xx emoji', async () => {
+    const event = {
+      reaction: 'flag-aq',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+
+    assert.strictEqual(fakeClient.chat.postMessage.mock.callCount(), 1);
+    const msgArgs = fakeClient.chat.postMessage.mock.calls[0].arguments[0];
+    assert.ok(msgArgs.text.includes(':flag-aq:'));
+    assert.ok(msgArgs.text.includes('not supported'));
+  });
+
+  it('should log error if unsupported language reply fails', async () => {
+    fakeClient.chat.postMessage = mock.fn(async () => { throw new Error('post failed'); });
+
+    const event = {
+      reaction: 'aq',
+      user: 'U_USER',
+      item: { channel: 'C123', ts: '1234.5678' },
+    };
+
+    await reactionAddedCallback({ event, client: fakeClient, logger: fakeLogger });
+    assert.strictEqual(fakeLogger.error.mock.callCount(), 1);
   });
 
   it('should handle short country code reactions (e.g. "fr")', async () => {

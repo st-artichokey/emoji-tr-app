@@ -1,5 +1,13 @@
 # Changelog
 
+## feat: Reply when unsupported flag emoji is used
+
+- When a user reacts with a flag emoji that has no supported language mapping, the bot now replies in the thread with the emoji and a "not supported" message
+- Non-flag reactions (e.g. thumbsup) are still silently ignored
+- Detects both 2-letter country codes and `flag-xx` format emoji
+- Added 3 tests covering the new behavior (unmapped short code, unmapped flag-xx, error handling)
+- Total tests: 52
+
 ## feat: Remove /translate command and modal
 
 - Removed `/translate` slash command, modal view, and all associated listeners (`commands/`, `views/`)

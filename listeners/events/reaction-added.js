@@ -13,11 +13,27 @@ const sendErrorDM = async (client, userId, reason, logger) => {
   }
 };
 
+const isFlagEmoji = (reaction) =>
+  /^flag-[a-z]{2}$/.test(reaction) || /^[a-z]{2}$/.test(reaction);
+
 const reactionAddedCallback = async ({ event, client, logger }) => {
   const reaction = event.reaction;
   const targetLang = FLAG_TO_LANGUAGE[reaction];
 
-  if (!targetLang) return;
+  if (!targetLang) {
+    if (isFlagEmoji(reaction)) {
+      try {
+        await client.chat.postMessage({
+          channel: event.item.channel,
+          thread_ts: event.item.ts,
+          text: `:${reaction}: Sorry, that language is not supported.`,
+        });
+      } catch (error) {
+        logger.error('Failed to post unsupported language reply:', error);
+      }
+    }
+    return;
+  }
 
   const userId = event.user;
   const langName = getLanguageName(targetLang);
