@@ -1,5 +1,9 @@
 # Changelog
 
+## docs: Add session log entry for contributing audit approach
+
+- Documented why Bash (`npm run lint`, `npm test`) and Explore subagents were used to verify CONTRIBUTING.md compliance
+
 ## docs: Add session log entries for GIF and token conventions
 
 - Added session log entries for token/model placeholders, GIF convention, and GIF appropriateness discussion
