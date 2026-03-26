@@ -1,5 +1,9 @@
 # Changelog
 
+## docs: Add session summary
+
+- Added `docs/session-summary.md` documenting all work completed during the session
+
 ## fix: Reuse DeepL Translator instance and fix app-oauth.js
 
 - Refactored `translate.js` to lazily initialize a singleton `Translator` instance for connection pooling
